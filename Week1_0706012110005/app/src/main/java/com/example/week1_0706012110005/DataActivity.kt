@@ -6,9 +6,11 @@ import Interface.CardListener
 import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.view.isInvisible
@@ -17,6 +19,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.week1_0706012110005.databinding.ActivityDataBinding
 import com.example.week1_0706012110005.databinding.ActivityMainBinding
+import com.google.android.material.snackbar.Snackbar
 
 class DataActivity : AppCompatActivity(),CardListener {
     private var adapter= ListAnimalRvAdapter(GlobalVar.listDataAnimal,this)
@@ -93,8 +96,33 @@ class DataActivity : AppCompatActivity(),CardListener {
     override fun onCardClick(edit: Boolean, position: Int) {
         //kode untuk edit/delete
         if(edit == true){
-            GlobalVar.listDataAnimal.removeAt(position)
-            adapter.notifyDataSetChanged()
+
+            val builder = AlertDialog.Builder(this)
+            builder.setTitle("Delete data hewan")
+            builder.setMessage("Yakin delete data hewan ini?                     " +
+                    "Maaf design super default karena Android studio saya bug ntah knp attributesnya tidak lengkap (textsize textcolor dll. tidak tersedia) dan saya tidak jago design manual dari codingan. Mohon dibantu toleransi :(")
+
+            builder.setPositiveButton(android.R.string.yes) { function, which ->
+                val snackbar = Snackbar.make(
+                    binding.listDataRV,
+                    "Hewan berhasil dihapus",
+                    Snackbar.LENGTH_INDEFINITE
+                )
+                snackbar.setAction("Done") { snackbar.dismiss() }
+                snackbar.setActionTextColor(Color.BLUE)
+                snackbar.setBackgroundTint(Color.GRAY)
+                snackbar.show()
+
+
+                GlobalVar.listDataAnimal.removeAt(position)
+                adapter.notifyDataSetChanged()
+            }
+                builder.setNegativeButton(android.R.string.no) { dialog, which ->
+                    Toast.makeText(applicationContext, android.R.string.no, Toast.LENGTH_SHORT).show()
+                }
+                builder.show()
+
+
         }else{
             val intent = Intent(this, InputActivity::class.java).putExtra("position",position)
             startActivity(intent)
